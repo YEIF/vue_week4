@@ -67,27 +67,54 @@
       <!-- 分頁 -->
       <!-- 內 pages,外 pagination -->
       <!-- 內 get-product, 外 getProduct -->
-      <pagination :pages="pagination" @get-product="getData"></pagination>
+      <pagination :pages="pagination" @change-pages="getData"></pagination>
     </div>
-    <!-- Modal -->
+    <!-- Modal start-->
 
     <div id="productModal" ref="productModal" class="modal fade" tabindex="-1" aria-labelledby="productModalLabel"
       aria-hidden="true">
-      <product-modal :temp-product="tempProduct" @get-products="getData" :is-new="isNew">
-      </product-modal>
+      <product-modalcomponent :temp-product="tempProduct" :is-new="isNew" :current-page="pagination.current_page"
+        @get-products="getData" @close-modal="closeModal" @create-imagesurl="createImagesUrl">
+      </product-modalcomponent>
     </div>
-
-
 
     <div id="delProductModal" ref="delProductModal" class="modal fade" tabindex="-1"
       aria-labelledby="delProductModalLabel" aria-hidden="true">
-      <delproduct-modal :temp-product="tempProduct" @get-products="getData" :is-new="isNew"></delproduct-modal>
+      <delproduct-modalcomponent :temp-product="tempProduct" :is-new="isNew" :current-page="pagination.current_page"
+        @get-products="getData" @close-modal="closeModal" @create-imagesurl="createImagesUrl">
+      </delproduct-modalcomponent>
     </div>
-    <!-- Modal -->
+    <!-- Modal end-->
   </div>
 
+  <!-- components start-->
+  <script type="text/x-template" id="templatepagination">
+    <nav aria-label="Page navigation example">
+      <ul class="pagination" >
+        <li class="page-item" :class="{disabled:!pages.has_pre}">
+          <a class="page-link" href="#" aria-label="Previous"
+          @click.prevent="changePages(pages.current_page-1)">
+            <span aria-hidden="true">&laquo;</span>
+          </a>
+        </li>
+        <li class="page-item"
+          :class="{active:page===pages.current_page}" 
+          v-for="page in pages.total_pages" :key="page+123" >
+          <a class="page-link" href="#"
+          @click.prevent="changePages(page)">{{page}}</a>
+        </li>
+        <li class="page-item" :class="{disabled:!pages.has_next}">
+          <a class="page-link" href="#" aria-label="Next"
+          @click.prevent="changePages(pages.current_page+1)">
+            <span aria-hidden="true">&raquo;</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </script>
+
   <script type="text/x-template" id="templateproductModal">
-      <div class="modal-dialog modal-xl">
+  <div class="modal-dialog modal-xl">
         <div class="modal-content border-0">
           <div class="modal-header bg-dark text-white">
             <h5 id="productModalLabel" class="modal-title">
@@ -203,7 +230,7 @@
               </button>
             </template>
             <template v-else>
-              <button type="button" class="btn btn-primary" @click="updateProduct">
+              <button type="button" class="btn btn-primary" @click="updateProduct" >
                 更新
               </button>
             </template>
@@ -237,6 +264,7 @@
       </div>
     </div>
   </script>
+  <!-- components end-->
 
   <script src='https://cdnjs.cloudflare.com/ajax/libs/axios/0.9.1/axios.min.js'
     integrity='sha512-Xk3wWei2TGrsh9kDSBKUMIjw/86sLUvhtnv9f7fOuIwhhiUTKz8szkWkzHthrM5Bb3Bu9idSzkxOrkzhcneuiw=='

@@ -1,6 +1,5 @@
-/* global productModal */
 export default {
-  props: ['tempProduct', 'isNew'],
+  props: ['tempProduct', 'isNew', 'currentPage'],
   template: '#templateproductModal',
   data () {
     return {
@@ -19,26 +18,18 @@ export default {
       axios[method](url, { data: this.tempProduct })
         .then(res => {
           // this.getData()
-          console.log(res)
-          this.$emit('get-products')
-          productModal.hide()
+          this.$emit('get-products', method === 'put' ? this.currentPage : 1)
+          this.closeModal()
           alert(res.data.message)
         }).catch(err => {
           console.dir(err)
         })
     },
     closeModal () {
-      productModal.hide()
+      this.$emit('close-modal')
     },
     createImagesUrl () {
-      this.tempProduct.imagesUrl = []
-      this.tempProduct.imagesUrl.push('')
+      this.$emit('create-imagesurl')
     }
-  },
-  mounted () {
-    const productModal = new bootstrap.Modal(document.getElementById('productModal'), {
-      keyboard: false,
-      backdrop: 'static'
-    })
   }
 }

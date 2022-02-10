@@ -1,16 +1,18 @@
 import { createApp } from 'https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.26/vue.esm-browser.min.js'
 import pagination from './components/pagination.js'
-// import productModalcomponent from './components/productModal.js'
-
+import productModalcomponent from './components/productModal.js'
+import delproductModalcomponent from './components/delproductModal.js'
 let productModal = null
 let delproductModal = null
 const app = createApp({
   components: {
-    pagination
+    pagination, productModalcomponent, delproductModalcomponent
   },
   data () {
     return {
-      tempProduct: {},
+      tempProduct: {
+        imagesUrl: []
+      },
       apiUrl: 'https://vue3-course-api.hexschool.io/v2',
       apiPath: 'clothes',
       isNew: false,
@@ -22,17 +24,25 @@ const app = createApp({
     openModal (type, product) {
       if (type === 'new') {
         this.isNew = true
+        this.modal = 'product'
         productModal.show()
-        this.tempProduct = {}
+        this.tempProduct = {
+          imagesUrl: []
+        }
       } else if (type === 'del') {
         this.isNew = false
+        this.modal = 'del'
         delproductModal.show()
-        this.tempProduct = { ...product }
+        this.tempProduct = JSON.parse(JSON.stringify(product))
       } else if (type === 'edit') {
         this.isNew = false
-        this.tempProduct = { ...product }
+        this.modal = 'product'
+        this.tempProduct = JSON.parse(JSON.stringify(product))
         productModal.show()
       }
+    },
+    closeModal () {
+      if (this.modal === 'product') { productModal.hide() } else if (this.modal === 'del') { delproductModal.hide() }
     },
     checkLogin () {
       const url = `${this.apiUrl}/api/user/check`
@@ -72,6 +82,10 @@ const app = createApp({
         }).catch((err) => {
           console.dir(err.data)
         })
+    },
+    createImagesUrl () {
+      this.tempProduct.imagesUrl = []
+      this.tempProduct.imagesUrl.push('')
     }
   },
   mounted () {
@@ -81,69 +95,6 @@ const app = createApp({
     const token = document.cookie.replace(/(?:(?:^|.*;\s*)hexToken\s*=\s*([^;]*).*$)|^.*$/, '$1')
     axios.defaults.headers.common.Authorization = token
     this.checkLogin()
-  }
-})
-app.component('productModal', {
-  props: ['tempProduct', 'isNew'],
-  template: '#templateproductModal',
-  data () {
-    return {
-      apiUrl: 'https://vue3-course-api.hexschool.io/v2',
-      apiPath: 'clothes',
-      product: this.tempProduct
-    }
-  },
-  methods: {
-    updateProduct () {
-      let url = `${this.apiUrl}/api/${this.apiPath}/admin/product/`
-      let method = 'post'
-      if (!this.isNew) {
-        url = `${this.apiUrl}/api/${this.apiPath}/admin/product/${this.tempProduct.id}`
-        method = 'put'
-      }
-      axios[method](url, { data: this.tempProduct })
-        .then(res => {
-          // this.getData()
-          this.$emit('get-products')
-          productModal.hide()
-          alert(res.data.message)
-        }).catch(err => {
-          console.dir(err)
-        })
-    },
-    closeModal () {
-      productModal.hide()
-    },
-    createImagesUrl () {
-      this.tempProduct.imagesUrl = []
-      this.tempProduct.imagesUrl.push('')
-    }
-  }
-})
-app.component('delproductModal', {
-  props: ['tempProduct', 'isNew'],
-  template: '#templatedelProductModal',
-  data () {
-    return {
-      apiUrl: 'https://vue3-course-api.hexschool.io/v2',
-      apiPath: 'clothes'
-    }
-  },
-  methods: {
-    delProduct () {
-      const url = `${this.apiUrl}/api/${this.apiPath}/admin/product/${this.tempProduct.id}`
-      axios.delete(url)
-        .then(res => {
-          this.$emit('get-products')
-          delproductModal.hide()
-          alert(res.data.message)
-        }).catch(err => {
-          console.dir(err)
-        })
-    },
-    closeModal () {
-      delproductModal.hide()
-    }
   }
 })
 
