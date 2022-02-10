@@ -115,8 +115,8 @@ app.component('productModal', {
       productModal.hide()
     },
     createImagesUrl () {
-      this.product.imagesUrl = []
-      this.product.imagesUrl.push('')
+      this.tempProduct.imagesUrl = []
+      this.tempProduct.imagesUrl.push('')
     }
   }
 })
