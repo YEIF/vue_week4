@@ -1,5 +1,6 @@
 import { createApp } from 'https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.26/vue.esm-browser.min.js'
 import pagination from './components/pagination.js'
+// import productModalcomponent from './components/productModal.js'
 
 let productModal = null
 let delproductModal = null
@@ -54,7 +55,6 @@ const app = createApp({
       const url = `${this.apiUrl}/api/${this.apiPath}/admin/products/?page=${page}`
       axios.get(url)
         .then((res) => {
-          console.log(res)
           this.products = res.data.products
           this.pagination = res.data.pagination
         })
@@ -89,8 +89,8 @@ app.component('productModal', {
   data () {
     return {
       apiUrl: 'https://vue3-course-api.hexschool.io/v2',
-      apiPath: 'clothes'
-
+      apiPath: 'clothes',
+      product: this.tempProduct
     }
   },
   methods: {
@@ -104,7 +104,6 @@ app.component('productModal', {
       axios[method](url, { data: this.tempProduct })
         .then(res => {
           // this.getData()
-          console.log(res)
           this.$emit('get-products')
           productModal.hide()
           alert(res.data.message)
@@ -116,8 +115,8 @@ app.component('productModal', {
       productModal.hide()
     },
     createImagesUrl () {
-      this.tempProduct.imagesUrl = []
-      this.tempProduct.imagesUrl.push('')
+      this.product.imagesUrl = []
+      this.product.imagesUrl.push('')
     }
   }
 })
@@ -132,7 +131,6 @@ app.component('delproductModal', {
   },
   methods: {
     delProduct () {
-      console.log(this.tempProduct)
       const url = `${this.apiUrl}/api/${this.apiPath}/admin/product/${this.tempProduct.id}`
       axios.delete(url)
         .then(res => {
