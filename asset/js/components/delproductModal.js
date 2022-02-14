@@ -1,5 +1,4 @@
 export default {
-  props: ['tempProduct', 'isNew', 'currentPage'],
   template: `<div class="modal-dialog">
     <div class="modal-content border-0">
       <div class="modal-header bg-danger text-white">
@@ -22,6 +21,7 @@ export default {
       </div>
     </div>
   </div>`,
+  props: ['tempProduct', 'isNew', 'currentPage'],
   data () {
     return {
       apiUrl: 'https://vue3-course-api.hexschool.io/v2',
